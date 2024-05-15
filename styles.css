@@ -31,7 +31,9 @@ body {
     background: #c2e2bd;
     padding: 15px;
     border-radius: 10px;
- 
+    -webkit-box-shadow: 0px 0px 2px 2px rgb(116 116 116)
+    -moz-box-shadow: 0px 0px 2px 2px rgb(116 116 116)
+    box-shadow: 0px 0px 2px 2px rgb(116 116 116)
 }
 
 #sidebar h1 {
@@ -44,6 +46,11 @@ body {
 
 #sidebar .header {
    display: flex; 
+}
+
+#sidebar .pizza-emoji {
+    font-size: 40px;
+    margin-right: 5px;
 }
 
 #sidebar .source-code-link {

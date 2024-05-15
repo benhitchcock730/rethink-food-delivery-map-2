@@ -31,6 +31,16 @@ siteData.forEach(function (siteRecord) {
         color = '#0077b6'
     }
 
+    var scale
+
+    // use if statements to assign colors based on siteData.program
+    if (siteRecord.program === 'Asylum Seeker Shelter') {
+        scale = 0.6
+    }
+    
+    if (siteRecord.program === 'Restaurant Partner') {
+        scale =0.9
+    }
 
     function getPopupText(siteRecord) {
         let popupText = "";
@@ -39,7 +49,7 @@ siteData.forEach(function (siteRecord) {
                 popupText = `${siteRecord.name} is housing ${siteRecord.number} asylum seekers.`;
                 break;
             case "Restaurant Partner":
-                popupText = `${siteRecord.name} has provided ${siteRecord.number} meals so far. It can deliver meals to any sites in the blue area in 30 minutes or less.`;
+                popupText = `${siteRecord.name} has provided ${siteRecord.number} meals so far. It can deliver meals to any shelters in the blue area in 30 minutes or less.`;
                 break;
             // case "Rethink Food HQ":
             //     popupText = `${siteRecord.name} is where the nonprofit staff is located.`;
@@ -61,7 +71,7 @@ siteData.forEach(function (siteRecord) {
 
     // create a marker, set the coordinates, add the popup, add it to the map
     new mapboxgl.Marker({
-        scale: 0.8,
+        scale: scale,
         color: color
     })
         .setLngLat([siteRecord.longitude, siteRecord.latitude])
@@ -71,12 +81,12 @@ siteData.forEach(function (siteRecord) {
 })
 
 
-// Add points to the map
+// Create points under the pins for the isochrone layer 
 var points = [
     {
       "type": "Feature",
       "properties": {
-        "name": "Point A"
+        "name": "Beatstro"
       },
       "geometry": {
         "type": "Point",
@@ -86,16 +96,36 @@ var points = [
     {
         "type": "Feature",
         "properties": {
-          "name": "Point B"
+          "name": "Brain Food"
         },
         "geometry": {
           "type": "Point",
           "coordinates": [-73.99118972046641, 40.69080464712702,]
         }
       },
-    // Add more points as needed
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Rethink HQ"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [-74.01115533109368, 40.70500051637887,]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Marlow Bistro"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [ -73.96366285050132, 40.80320969545546,]
+        }
+      },
   ];
-  
+
+
   // Add points to the map
   map.on('load', function () {
     map.addSource('points', {
@@ -107,20 +137,27 @@ var points = [
     });
   
     map.addLayer({
-      'id': 'points',
+      'id': 'dots',
       'type': 'circle',
       'source': 'points',
       'paint': {
-        'circle-radius': 6,
-        'circle-color': '#007cbf'
+        'circle-radius': 20,
+        'circle-color': 'transparent'
       }
     });
   
-    // Add click event listener to each point
-    map.on('click', 'points', function (e) {
-      var coordinates = e.features[0].geometry.coordinates.slice();
-      var name = e.features[0].properties.name;
-  
+
+// Add click event listener to each point
+map.on('click', 'dots', function (e) {
+    var coordinates = e.features[0].geometry.coordinates.slice();
+    var name = e.features[0].properties.name;
+
+    if (map.getLayer('isochrone')) {
+        map.removeLayer('isochrone');
+        map.removeSource('isochrone');
+    }
+
+
       // Calculate isochrone for 30 mins of driving
       $.ajax({
         method: 'GET',
@@ -148,26 +185,36 @@ var points = [
               'fill-opacity': 0.5
             }
           });
+          isochroneVisible = true;
         }
       });
+    
     });
   
     // Change the cursor to a pointer when the mouse is over the points layer.
-    map.on('mouseenter', 'points', function () {
+    map.on('mouseenter', 'markers', function () {
       map.getCanvas().style.cursor = 'pointer';
     });
   
     // Change it back to a pointer when it leaves.
-    map.on('mouseleave', 'points', function () {
+    map.on('mouseleave', 'markers', function () {
       map.getCanvas().style.cursor = '';
     });
      
-    // Remove isochrone when clicking outside the points
-    // this is what chatgpt suggested for this but it's not working 
-    map.on('click', function (e) {
-    if (!map.queryRenderedFeatures(e.point, { layers: ['points'] })) {
-      map.removeLayer('isochrone');
+    
+  map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point, {
+        layers: ['dots']
+    });
+
+    if (!features.length) {
+        if (map.getLayer('isochrone')) {
+            map.removeLayer('isochrone');
+            map.removeSource('isochrone');
+        }
     }
-  });
+});
     
   });
+
+

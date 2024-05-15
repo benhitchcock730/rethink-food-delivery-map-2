@@ -8,10 +8,31 @@ var siteData = [
     "program": "Asylum Seeker Shelter"
 },
 {
+    "name": "Lincoln Correctional Center",
+    "number": "500",
+    "longitude":  -73.95033426031956,
+    "latitude": 40.79784746644498,
+    "program": "Asylum Seeker Shelter"
+},
+{
     "name": "JFK Airport Hangar",
     "number": "700",
     "longitude": -73.76935716147023,
     "latitude": 40.65362364444828,
+    "program": "Asylum Seeker Shelter"
+},
+{
+    "name": "The Watson Hotel",
+    "number": "1,200",
+    "longitude":  -73.98616137965081,
+    "latitude": 40.76879332626516,
+    "program": "Asylum Seeker Shelter"
+},
+{
+    "name": "Creedmoor Psychiatric Center",
+    "number": "900",
+    "longitude": -73.7310271722666,
+    "latitude": 40.741578609182035, 
     "program": "Asylum Seeker Shelter"
 },
 {
